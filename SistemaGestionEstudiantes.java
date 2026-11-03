@@ -51,13 +51,13 @@ public class SistemaGestionEstudiantes {
                     agregarEstudiante();
                     break;
                 case 2:
-                    System.out.println("Mostrar lista: en construccion");
+                    mostrarTodos();
                     break;
                 case 3:
-                    System.out.println("Mostrar lista inversa: en construccion");
+                    mostrarTodosInverso();
                     break;
                 case 4:
-                    System.out.println("Buscar por ID: en construccion");
+                    buscarEstudiante();
                     break;
                 case 5:
                     banderaSalir = true; // con esto el while ya no se repite
@@ -118,6 +118,72 @@ public class SistemaGestionEstudiantes {
         }
     }
 
+    public static void mostrarTodos() {
+        System.out.println();
+        System.out.println("--- LISTA DE ESTUDIANTES ---");
+
+        if (totalEstudiantes == 0) {
+            System.out.println("No hay estudiantes registrados todavia.");
+        } else {
+            double sumaNotas = 0; // sumatoria de las notas para sacar el promedio
+            int aprobados = 0;    // contador de estudiantes que aprobaron
+
+            // for ascendente: va desde el primer estudiante (0) hasta el ultimo
+            for (int i = 0; i < totalEstudiantes; i++) {
+                System.out.print((i + 1) + ". ");
+                mostrarEstudiante(i);
+                sumaNotas = sumaNotas + notas[i];
+                if (notas[i] >= NOTA_PARA_APROBAR) {
+                    aprobados++;
+                }
+            }
+
+            double promedio = sumaNotas / totalEstudiantes;
+            // redondeo a 2 decimales para que se vea mas ordenado
+            promedio = Math.round(promedio * 100) / 100.0;
+
+            System.out.println("----------------------------------------------");
+            System.out.println("Total de estudiantes: " + totalEstudiantes);
+            System.out.println("Promedio general: " + promedio);
+            System.out.println("Aprobados: " + aprobados + " | Reprobados: " + (totalEstudiantes - aprobados));
+        }
+    }
+
+    public static void mostrarTodosInverso() {
+        System.out.println();
+        System.out.println("--- LISTA EN ORDEN INVERSO (del ultimo al primero) ---");
+
+        if (totalEstudiantes == 0) {
+            System.out.println("No hay estudiantes registrados todavia.");
+        } else {
+            // for descendente: empieza en el ultimo estudiante y baja hasta 0
+            for (int i = totalEstudiantes - 1; i >= 0; i--) {
+                System.out.print((i + 1) + ". ");
+                mostrarEstudiante(i);
+            }
+        }
+    }
+
+    public static void buscarEstudiante() {
+        System.out.println();
+        System.out.println("--- BUSCAR ESTUDIANTE POR ID ---");
+
+        if (totalEstudiantes == 0) {
+            System.out.println("No hay estudiantes registrados para buscar.");
+        } else {
+            int idBuscado = leerEntero("Escriba el ID a buscar: ");
+            int posicion = buscarPosicionPorId(idBuscado);
+
+            // decision: si la posicion es -1 quiere decir que no se encontro
+            if (posicion == -1) {
+                System.out.println("No se encontro ningun estudiante con el ID " + idBuscado + ".");
+            } else {
+                System.out.println("Estudiante encontrado:");
+                mostrarEstudiante(posicion);
+            }
+        }
+    }
+
     // ================= FUNCIONES DE AYUDA =================
 
     // Busqueda lineal: revisa uno por uno desde la posicion 0.
@@ -130,6 +196,30 @@ public class SistemaGestionEstudiantes {
             }
         }
         return -1;
+    }
+
+    // Muestra los datos de un solo estudiante en una linea
+    public static void mostrarEstudiante(int posicion) {
+        System.out.println("ID: " + ids[posicion]
+                + " | Nombre: " + nombres[posicion]
+                + " | Edad: " + edades[posicion]
+                + " | Nota: " + notas[posicion]
+                + " | Estado: " + obtenerEstado(notas[posicion]));
+    }
+
+    // if anidado: primero miro si aprobo y despues si fue excelente
+    public static String obtenerEstado(double nota) {
+        String estado;
+        if (nota >= NOTA_PARA_APROBAR) {
+            if (nota >= 4.5) {
+                estado = "Excelente";
+            } else {
+                estado = "Aprobado";
+            }
+        } else {
+            estado = "Reprobado";
+        }
+        return estado;
     }
 
     // ============ FUNCIONES PARA LEER DATOS (VALIDACIONES) ============
