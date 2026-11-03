@@ -48,7 +48,7 @@ public class SistemaGestionEstudiantes {
             // switch (decision multiple): cada numero lleva a una funcion distinta
             switch (opcion) {
                 case 1:
-                    System.out.println("Agregar estudiante: en construccion");
+                    agregarEstudiante();
                     break;
                 case 2:
                     System.out.println("Mostrar lista: en construccion");
@@ -87,6 +87,51 @@ public class SistemaGestionEstudiantes {
         System.out.println("Estudiantes registrados: " + totalEstudiantes + " de " + MAX_ESTUDIANTES);
     }
 
+    public static void agregarEstudiante() {
+        System.out.println();
+        System.out.println("--- AGREGAR ESTUDIANTE ---");
+
+        // Primero reviso que quede espacio, porque el arreglo tiene tamano fijo
+        if (totalEstudiantes >= MAX_ESTUDIANTES) {
+            System.out.println("No se pueden agregar mas estudiantes. El sistema esta lleno ("
+                    + MAX_ESTUDIANTES + " de " + MAX_ESTUDIANTES + ").");
+        } else {
+            int id = leerEnteroEnRango("ID del estudiante: ", 1, 999999);
+
+            // if anidado: no dejo guardar dos estudiantes con el mismo ID
+            if (buscarPosicionPorId(id) != -1) {
+                System.out.println("Error: ya existe un estudiante con el ID " + id + ".");
+            } else {
+                String nombre = leerTexto("Nombre completo: ");
+                int edad = leerEnteroEnRango("Edad: ", 15, 99);
+                double nota = leerNota("Nota final (0.0 a 5.0): ");
+
+                // Guardo los datos en la posicion libre, que es igual al contador
+                ids[totalEstudiantes] = id;
+                nombres[totalEstudiantes] = nombre;
+                edades[totalEstudiantes] = edad;
+                notas[totalEstudiantes] = nota;
+                totalEstudiantes++; // aumento el contador
+
+                System.out.println("Estudiante agregado correctamente. Total: " + totalEstudiantes);
+            }
+        }
+    }
+
+    // ================= FUNCIONES DE AYUDA =================
+
+    // Busqueda lineal: revisa uno por uno desde la posicion 0.
+    // Devuelve la posicion donde esta el ID, o -1 si no existe.
+    // La uso en agregar (para no repetir IDs) y en buscar, asi no repito codigo.
+    public static int buscarPosicionPorId(int idBuscado) {
+        for (int i = 0; i < totalEstudiantes; i++) {
+            if (ids[i] == idBuscado) {
+                return i; // ya lo encontre, no hace falta seguir buscando
+            }
+        }
+        return -1;
+    }
+
     // ============ FUNCIONES PARA LEER DATOS (VALIDACIONES) ============
 
     // Pide un numero entero hasta que el usuario escriba uno valido.
@@ -107,5 +152,54 @@ public class SistemaGestionEstudiantes {
             }
         } while (!datoValido);
         return numero;
+    }
+
+    // Igual que leerEntero pero ademas revisa que el numero este en un rango
+    public static int leerEnteroEnRango(String mensaje, int minimo, int maximo) {
+        int numero;
+        do {
+            numero = leerEntero(mensaje);
+            if (numero < minimo || numero > maximo) {
+                System.out.println("Error: el numero debe estar entre " + minimo + " y " + maximo + ".");
+            }
+        } while (numero < minimo || numero > maximo);
+        return numero;
+    }
+
+    // Pide un texto y no deja que quede vacio
+    public static String leerTexto(String mensaje) {
+        String texto;
+        do {
+            System.out.print(mensaje);
+            texto = teclado.nextLine().trim();
+            if (texto.isEmpty()) {
+                System.out.println("Error: este dato no puede quedar vacio.");
+            }
+        } while (texto.isEmpty());
+        return texto;
+    }
+
+    // Pide la nota hasta que sea un numero entre 0.0 y 5.0
+    public static double leerNota(String mensaje) {
+        double nota = 0;
+        boolean datoValido;
+        do {
+            System.out.print(mensaje);
+            // cambio la coma por punto porque mucha gente escribe la nota asi: 4,5
+            String texto = teclado.nextLine().trim().replace(",", ".");
+            try {
+                nota = Double.parseDouble(texto);
+                if (nota >= 0.0 && nota <= 5.0) {
+                    datoValido = true;
+                } else {
+                    System.out.println("Error: la nota debe estar entre 0.0 y 5.0.");
+                    datoValido = false;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error: debe escribir un numero, por ejemplo 3.5");
+                datoValido = false;
+            }
+        } while (!datoValido);
+        return nota;
     }
 }
