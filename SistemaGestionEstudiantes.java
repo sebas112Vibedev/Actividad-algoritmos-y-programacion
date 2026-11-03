@@ -9,6 +9,24 @@ import java.util.Scanner;
  */
 public class SistemaGestionEstudiantes {
 
+    // Cantidad maxima de estudiantes. La pongo como constante para no
+    // escribir el 50 en varias partes y poder cambiarlo en un solo lugar.
+    static final int MAX_ESTUDIANTES = 50;
+
+    // Nota minima para aprobar (la escala es de 0.0 a 5.0)
+    static final double NOTA_PARA_APROBAR = 3.0;
+
+    // Arreglos paralelos: en la misma posicion de cada arreglo
+    // estan los datos de un mismo estudiante.
+    static int[] ids = new int[MAX_ESTUDIANTES];
+    static String[] nombres = new String[MAX_ESTUDIANTES];
+    static int[] edades = new int[MAX_ESTUDIANTES];
+    static double[] notas = new double[MAX_ESTUDIANTES];
+
+    // Contador de estudiantes guardados. Tambien me sirve como la
+    // posicion libre donde se va a guardar el siguiente estudiante.
+    static int totalEstudiantes = 0;
+
     // Un solo Scanner para todo el programa
     static Scanner teclado = new Scanner(System.in);
 
@@ -50,6 +68,7 @@ public class SistemaGestionEstudiantes {
         }
 
         System.out.println();
+        System.out.println("Estudiantes registrados en esta sesion: " + totalEstudiantes);
         System.out.println("Gracias por usar el SGE. Hasta luego!");
         teclado.close();
     }
@@ -65,6 +84,7 @@ public class SistemaGestionEstudiantes {
         System.out.println("4. Buscar estudiante por ID");
         System.out.println("5. Salir");
         System.out.println("----------------------------------------------");
+        System.out.println("Estudiantes registrados: " + totalEstudiantes + " de " + MAX_ESTUDIANTES);
     }
 
     // ============ FUNCIONES PARA LEER DATOS (VALIDACIONES) ============
